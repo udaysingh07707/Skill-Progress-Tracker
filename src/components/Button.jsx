@@ -1,10 +1,10 @@
 const variants = {
   primary:
-    "bg-slate-950 text-white shadow-sm hover:bg-slate-800 focus-visible:ring-slate-400",
+    "bg-slate-950 text-white shadow-sm hover:bg-teal-950 focus-visible:ring-teal-400",
   secondary:
     "bg-white text-slate-800 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 focus-visible:ring-slate-400",
   accent:
-    "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 focus-visible:ring-emerald-300",
+    "bg-teal-700 text-white shadow-sm hover:bg-teal-800 focus-visible:ring-teal-300",
   danger:
     "bg-rose-600 text-white shadow-sm hover:bg-rose-700 focus-visible:ring-rose-300",
   ghost:

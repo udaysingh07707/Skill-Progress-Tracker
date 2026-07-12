@@ -12,7 +12,9 @@ const links = [
 
 const linkClass = ({ isActive }) =>
   `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-    isActive ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+    isActive
+      ? "bg-gradient-to-r from-slate-950 via-teal-950 to-teal-800 text-white shadow-sm"
+      : "text-slate-600 hover:bg-teal-50 hover:text-teal-950"
   }`;
 
 export default function Sidebar() {
@@ -21,7 +23,7 @@ export default function Sidebar() {
   return (
     <aside className="sticky top-24 hidden h-fit w-64 shrink-0 lg:block">
       <div className="panel p-4">
-        <p className="px-3 text-xs font-bold uppercase tracking-wide text-slate-400">Workspace</p>
+        <p className="px-3 text-xs font-bold uppercase tracking-wide text-teal-700">Workspace</p>
         <nav className="mt-3 grid gap-1" aria-label="Dashboard navigation">
           {links.map((link) => (
             <NavLink className={linkClass} end={link.path === "/dashboard"} key={link.path} to={link.path}>
@@ -33,7 +35,7 @@ export default function Sidebar() {
       </div>
 
       <div className="panel mt-4 p-4">
-        <div className="rounded-2xl bg-gradient-to-br from-slate-950 via-teal-950 to-emerald-800 p-4 text-white">
+        <div className="app-accent-card p-4">
           <p className="text-sm font-semibold text-emerald-100">Current Level</p>
           <p className="mt-2 text-4xl font-black">{stats.currentLevel}</p>
           <ProgressBar

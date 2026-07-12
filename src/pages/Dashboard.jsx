@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   return (
     <div className="grid gap-6">
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 p-6 text-white shadow-soft sm:p-8">
+      <section className="app-accent-surface">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <p className="inline-flex rounded-full bg-white/15 px-3 py-1 text-sm font-semibold text-emerald-50 ring-1 ring-white/20">
@@ -109,7 +109,7 @@ export default function Dashboard() {
                   <p className="mt-1 text-sm text-slate-500">Latest updated learning items</p>
                 </div>
                 <Link
-                  className="text-sm font-bold text-emerald-700 transition hover:text-emerald-900"
+                  className="text-sm font-bold text-teal-700 transition hover:text-teal-950"
                   to="/skills"
                 >
                   View all
@@ -119,7 +119,7 @@ export default function Dashboard() {
               <div className="mt-5 grid gap-3">
                 {stats.recentSkills.map((skill) => (
                   <Link
-                    className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-emerald-200 hover:bg-white hover:shadow-card"
+                    className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:border-teal-200 hover:bg-white hover:shadow-card"
                     key={skill.id}
                     to="/skills"
                   >

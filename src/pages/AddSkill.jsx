@@ -15,7 +15,7 @@ export default function AddSkill() {
 
   return (
     <div className="grid gap-6">
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-teal-950 to-emerald-800 p-6 text-white shadow-soft sm:p-8">
+      <section className="app-accent-surface">
         <Button as={Link} icon={ArrowLeft} to="/skills" variant="inverse">
           My Skills
         </Button>

@@ -1,19 +1,19 @@
-import { createContext, useMemo } from "react";
-import useLocalStorage from "../hooks/useLocalStorage.js";
+import { createContext, useMemo, useState } from "react";
 
 export const AuthContext = createContext(null);
 
-const STORAGE_KEY = "skill-progress-tracker:user";
-
 export function AuthProvider({ children }) {
-  const [user, setUser] = useLocalStorage(STORAGE_KEY, null);
+  // Authentication is intentionally kept only for the current app session.
+  // Skills remain saved separately by email, but reopening the app requires a new login.
+  const [user, setUser] = useState(null);
 
   const login = ({ email, name }) => {
     const cleanName = name?.trim() || "Skill Builder";
+    const cleanEmail = email?.trim().toLowerCase() || "";
 
     setUser({
       name: cleanName,
-      email: email?.trim() || "",
+      email: cleanEmail,
       signedInAt: new Date().toISOString(),
     });
   };
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(
     () => ({
-      isAuthenticated: Boolean(user),
+      isAuthenticated: Boolean(user?.email?.trim()),
       login,
       logout,
       user,

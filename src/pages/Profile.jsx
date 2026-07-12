@@ -37,7 +37,7 @@ export default function Profile() {
   return (
     <div className="grid gap-6">
       <section className="panel overflow-hidden">
-        <div className="h-28 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600" />
+        <div className="app-accent-strip h-28" />
         <div className="p-5 sm:p-6">
           <div className="-mt-16 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-end gap-4">
@@ -45,7 +45,7 @@ export default function Profile() {
                 <UserRound className="h-11 w-11" aria-hidden="true" />
               </div>
               <div className="pb-1">
-                <p className="text-sm font-bold uppercase tracking-wide text-emerald-700">Profile</p>
+                <p className="text-sm font-bold uppercase tracking-wide text-teal-700">Profile</p>
                 <h1 className="text-3xl font-black tracking-normal text-slate-950">
                   {user?.name || "Skill Builder"}
                 </h1>

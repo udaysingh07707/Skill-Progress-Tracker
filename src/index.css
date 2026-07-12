@@ -35,6 +35,43 @@
   .interactive {
     @apply transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft;
   }
+
+  .app-accent-surface,
+  .app-accent-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      linear-gradient(120deg, rgba(15, 23, 42, 0.98), rgba(15, 118, 110, 0.76)),
+      linear-gradient(45deg, #020617, #0f766e 55%, #0891b2);
+  }
+
+  .app-accent-surface::before,
+  .app-accent-card::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    content: "";
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: linear-gradient(to bottom right, rgba(0, 0, 0, 0.9), transparent 95%);
+  }
+
+  .app-accent-surface {
+    @apply rounded-3xl p-6 text-white shadow-soft sm:p-8;
+  }
+
+  .app-accent-card {
+    @apply rounded-2xl text-white;
+  }
+
+  .app-accent-strip {
+    background:
+      linear-gradient(120deg, rgba(15, 23, 42, 0.97), rgba(15, 118, 110, 0.75)),
+      linear-gradient(45deg, #020617, #0f766e 55%, #0891b2);
+  }
 }
 
 @layer utilities {

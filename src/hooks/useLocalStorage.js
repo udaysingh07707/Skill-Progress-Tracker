@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 const readStoredValue = (key, initialValue) => {
+  if (!key) return initialValue;
+
   try {
     const storedValue = window.localStorage.getItem(key);
     return storedValue ? JSON.parse(storedValue) : initialValue;
@@ -24,6 +26,8 @@ export default function useLocalStorage(key, initialValue) {
 
   const setValue = useCallback(
     (nextValue) => {
+      if (!key) return;
+
       setStoredState((currentState) => {
         const currentValue =
           currentState.key === key
@@ -39,7 +43,7 @@ export default function useLocalStorage(key, initialValue) {
   );
 
   useEffect(() => {
-    if (storedState.key !== key) return;
+    if (!key || storedState.key !== key) return;
 
     try {
       window.localStorage.setItem(key, JSON.stringify(storedState.value));
@@ -49,9 +53,11 @@ export default function useLocalStorage(key, initialValue) {
   }, [key, storedState]);
 
   return [
-    storedState.key === key
-      ? storedState.value
-      : readStoredValue(key, initialValue),
+    key
+      ? storedState.key === key
+        ? storedState.value
+        : readStoredValue(key, initialValue)
+      : initialValue,
     setValue,
   ];
 }

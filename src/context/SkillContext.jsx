@@ -18,9 +18,7 @@ const STORAGE_KEY_PREFIX = "skill-progress-tracker:skills";
 
 const getSkillsStorageKey = (email) => {
   const normalizedEmail = email?.trim().toLowerCase();
-  return normalizedEmail
-    ? `${STORAGE_KEY_PREFIX}:${normalizedEmail}`
-    : `${STORAGE_KEY_PREFIX}:guest`;
+  return normalizedEmail ? `${STORAGE_KEY_PREFIX}:${normalizedEmail}` : null;
 };
 
 const getDateKey = (dateValue) => {
@@ -57,30 +55,47 @@ const normalizeSkill = (skill, { preserveUpdatedAt = false } = {}) => {
 
 export function SkillProvider({ children }) {
   const { user } = useAuth();
+  const isAuthenticated = Boolean(user?.email?.trim());
   const storageKey = useMemo(() => getSkillsStorageKey(user?.email), [user?.email]);
   const [storedSkills, setStoredSkills] = useLocalStorage(storageKey, EMPTY_SKILLS);
   const skills = useMemo(
-    () => storedSkills.map((skill) => normalizeSkill(skill, { preserveUpdatedAt: true })),
-    [storedSkills]
+    () =>
+      isAuthenticated && Array.isArray(storedSkills)
+        ? storedSkills.map((skill) => normalizeSkill(skill, { preserveUpdatedAt: true }))
+        : EMPTY_SKILLS,
+    [isAuthenticated, storedSkills]
   );
 
   const addSkill = useCallback((skill) => {
-    setStoredSkills((currentSkills) => [normalizeSkill(skill), ...currentSkills]);
-  }, [setStoredSkills]);
+    if (!isAuthenticated) return;
+
+    setStoredSkills((currentSkills) => [
+      normalizeSkill(skill),
+      ...(Array.isArray(currentSkills) ? currentSkills : EMPTY_SKILLS),
+    ]);
+  }, [isAuthenticated, setStoredSkills]);
 
   const updateSkill = useCallback((id, updates) => {
+    if (!isAuthenticated) return;
+
     setStoredSkills((currentSkills) =>
-      currentSkills.map((skill) =>
+      (Array.isArray(currentSkills) ? currentSkills : EMPTY_SKILLS).map((skill) =>
         skill.id === id
           ? normalizeSkill({ ...skill, ...updates, id, createdAt: skill.createdAt })
           : skill
       )
     );
-  }, [setStoredSkills]);
+  }, [isAuthenticated, setStoredSkills]);
 
   const deleteSkill = useCallback((id) => {
-    setStoredSkills((currentSkills) => currentSkills.filter((skill) => skill.id !== id));
-  }, [setStoredSkills]);
+    if (!isAuthenticated) return;
+
+    setStoredSkills((currentSkills) =>
+      (Array.isArray(currentSkills) ? currentSkills : EMPTY_SKILLS).filter(
+        (skill) => skill.id !== id
+      )
+    );
+  }, [isAuthenticated, setStoredSkills]);
 
   const stats = useMemo(() => {
     const totalSkills = skills.length;

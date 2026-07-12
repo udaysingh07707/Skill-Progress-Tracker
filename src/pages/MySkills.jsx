@@ -49,7 +49,7 @@ export default function MySkills() {
     <div className="grid gap-6">
       <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-emerald-700">My Skills</p>
+          <p className="text-sm font-bold uppercase tracking-wide text-teal-700">My Skills</p>
           <h1 className="mt-2 text-3xl font-black tracking-normal text-slate-950">Skill Library</h1>
         </div>
       </section>
@@ -60,7 +60,7 @@ export default function MySkills() {
             <span className="mb-2 block text-sm font-semibold text-slate-700">Search</span>
             <Search className="pointer-events-none absolute bottom-3 left-3 h-5 w-5 text-slate-400" />
             <input
-              className="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+              className="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-4 focus:ring-teal-100"
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search skills"
               value={search}
