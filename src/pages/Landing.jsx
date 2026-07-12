@@ -3,6 +3,7 @@ import {
   BarChart3,
   CheckCircle2,
   GraduationCap,
+  PlusCircle,
   ShieldCheck,
   Sparkles,
   Trophy,
@@ -10,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import useAuth from "../hooks/useAuth.js";
+import useSkills from "../hooks/useSkills.js";
 
 const highlights = [
   { label: "Auto XP", icon: Sparkles },
@@ -17,15 +19,23 @@ const highlights = [
   { label: "Progress Dashboard", icon: BarChart3 },
 ];
 
-const floatingSkills = [
-  { name: "React.js", value: 82, tone: "emerald" },
-  { name: "Tailwind CSS", value: 68, tone: "cyan" },
-  { name: "Node APIs", value: 45, tone: "amber" },
+const previewSteps = [
+  { id: "login", title: "Login with email", detail: "Private local space" },
+  { id: "add", title: "Add your skills", detail: "Start from empty" },
+  { id: "track", title: "Track real progress", detail: "XP updates live" },
 ];
+
+const progressTones = ["emerald", "cyan", "amber"];
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
-  const destination = isAuthenticated ? "/dashboard" : "/login";
+  const { stats } = useSkills();
+  const boardSkills = stats.recentSkills.slice(0, 3).map((skill, index) => ({
+    id: skill.id,
+    name: skill.name,
+    value: skill.progress,
+    tone: progressTones[index % progressTones.length],
+  }));
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
@@ -40,8 +50,8 @@ export default function Landing() {
               </span>
               <span className="text-lg font-black tracking-normal">Skill Progress Tracker</span>
             </Link>
-            <Button as={Link} icon={ArrowRight} to={destination} variant="light">
-              {isAuthenticated ? "Dashboard" : "Login"}
+            <Button as={Link} icon={ArrowRight} to="/login" variant="light">
+              Sign In
             </Button>
           </div>
         </header>
@@ -65,7 +75,7 @@ export default function Landing() {
                 as={Link}
                 className="min-h-12 px-6 text-base"
                 icon={ArrowRight}
-                to={destination}
+                to="/login"
                 variant="light"
               >
                 Start Tracking
@@ -96,40 +106,74 @@ export default function Landing() {
           <div className="scene-panel scene-panel-main">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold uppercase text-emerald-200">Today</p>
-                <h2 className="mt-1 text-2xl font-black">Learning Board</h2>
+                <p className="text-sm font-bold uppercase text-emerald-200">
+                  {isAuthenticated ? "Today" : "Start here"}
+                </p>
+                <h2 className="mt-1 text-2xl font-black">
+                  {isAuthenticated ? "Learning Board" : "Build Your Board"}
+                </h2>
               </div>
               <div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-400 text-slate-950">
-                <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
+                {isAuthenticated ? (
+                  <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <PlusCircle className="h-6 w-6" aria-hidden="true" />
+                )}
               </div>
             </div>
 
             <div className="mt-8 grid gap-4">
-              {floatingSkills.map((skill, index) => (
-                <div className={`scene-skill scene-delay-${index}`} key={skill.name}>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold">{skill.name}</span>
-                    <span className="text-sm font-black text-emerald-200">{skill.value}%</span>
-                  </div>
-                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className={`progress-loop progress-${skill.tone}`}
-                      style={{ "--target-width": `${skill.value}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
+              {boardSkills.length > 0
+                ? boardSkills.map((skill, index) => (
+                    <div className={`scene-skill scene-delay-${index}`} key={skill.id}>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold">{skill.name}</span>
+                        <span className="text-sm font-black text-emerald-200">
+                          {skill.value}%
+                        </span>
+                      </div>
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                        <div
+                          className={`progress-loop progress-${skill.tone}`}
+                          style={{ "--target-width": `${skill.value}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))
+                : previewSteps.map((step, index) => (
+                    <div className={`scene-skill scene-delay-${index}`} key={step.id}>
+                      <div className="flex items-start gap-3">
+                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-white text-sm font-black text-slate-950">
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-bold">{step.title}</p>
+                          <p className="mt-1 text-sm font-semibold text-emerald-100">
+                            {step.detail}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
             </div>
           </div>
 
           <div className="scene-panel scene-panel-top">
-            <p className="text-sm font-bold text-cyan-100">Total XP</p>
-            <p className="mt-2 text-4xl font-black">2,320</p>
+            <p className="text-sm font-bold text-cyan-100">
+              {isAuthenticated ? "Total XP" : "Private Data"}
+            </p>
+            <p className={`mt-2 font-black ${isAuthenticated ? "text-4xl" : "text-xl"}`}>
+              {isAuthenticated ? stats.totalXp.toLocaleString() : "Per Email"}
+            </p>
           </div>
 
           <div className="scene-panel scene-panel-bottom">
-            <p className="text-sm font-bold text-amber-100">Current Level</p>
-            <p className="mt-2 text-4xl font-black">5</p>
+            <p className="text-sm font-bold text-amber-100">
+              {isAuthenticated ? "Current Level" : "Local Save"}
+            </p>
+            <p className={`mt-2 font-black ${isAuthenticated ? "text-4xl" : "text-xl"}`}>
+              {isAuthenticated ? stats.currentLevel : "Same Device"}
+            </p>
           </div>
         </div>
       </section>

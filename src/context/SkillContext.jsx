@@ -1,5 +1,5 @@
-import { createContext, useMemo } from "react";
-import { initialSkills } from "../data/initialSkills.js";
+import { createContext, useCallback, useMemo } from "react";
+import useAuth from "../hooks/useAuth.js";
 import useLocalStorage from "../hooks/useLocalStorage.js";
 import {
   calculateCurrentLevel,
@@ -13,7 +13,30 @@ import {
 
 export const SkillContext = createContext(null);
 
-const STORAGE_KEY = "skill-progress-tracker:skills";
+const EMPTY_SKILLS = [];
+const STORAGE_KEY_PREFIX = "skill-progress-tracker:skills";
+
+const getSkillsStorageKey = (email) => {
+  const normalizedEmail = email?.trim().toLowerCase();
+  return normalizedEmail
+    ? `${STORAGE_KEY_PREFIX}:${normalizedEmail}`
+    : `${STORAGE_KEY_PREFIX}:guest`;
+};
+
+const getDateKey = (dateValue) => {
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toISOString().slice(0, 10);
+};
+
+const getStartOfWeek = (dateValue) => {
+  const date = new Date(dateValue);
+  const dayOffset = (date.getDay() + 6) % 7;
+  date.setDate(date.getDate() - dayOffset);
+  date.setHours(0, 0, 0, 0);
+  return date;
+};
 
 const normalizeSkill = (skill, { preserveUpdatedAt = false } = {}) => {
   const now = new Date().toISOString();
@@ -33,17 +56,19 @@ const normalizeSkill = (skill, { preserveUpdatedAt = false } = {}) => {
 };
 
 export function SkillProvider({ children }) {
-  const [storedSkills, setStoredSkills] = useLocalStorage(STORAGE_KEY, initialSkills);
+  const { user } = useAuth();
+  const storageKey = useMemo(() => getSkillsStorageKey(user?.email), [user?.email]);
+  const [storedSkills, setStoredSkills] = useLocalStorage(storageKey, EMPTY_SKILLS);
   const skills = useMemo(
     () => storedSkills.map((skill) => normalizeSkill(skill, { preserveUpdatedAt: true })),
     [storedSkills]
   );
 
-  const addSkill = (skill) => {
+  const addSkill = useCallback((skill) => {
     setStoredSkills((currentSkills) => [normalizeSkill(skill), ...currentSkills]);
-  };
+  }, [setStoredSkills]);
 
-  const updateSkill = (id, updates) => {
+  const updateSkill = useCallback((id, updates) => {
     setStoredSkills((currentSkills) =>
       currentSkills.map((skill) =>
         skill.id === id
@@ -51,11 +76,11 @@ export function SkillProvider({ children }) {
           : skill
       )
     );
-  };
+  }, [setStoredSkills]);
 
-  const deleteSkill = (id) => {
+  const deleteSkill = useCallback((id) => {
     setStoredSkills((currentSkills) => currentSkills.filter((skill) => skill.id !== id));
-  };
+  }, [setStoredSkills]);
 
   const stats = useMemo(() => {
     const totalSkills = skills.length;
@@ -64,20 +89,44 @@ export function SkillProvider({ children }) {
       (skill) => skill.progress > 0 && skill.progress < 100
     ).length;
     const totalXp = skills.reduce((sum, skill) => sum + skill.xp, 0);
+    const totalProgress = skills.reduce((sum, skill) => sum + skill.progress, 0);
+    const averageProgress =
+      totalSkills > 0 ? Math.round(totalProgress / totalSkills) : 0;
     const currentLevel = calculateCurrentLevel(totalXp);
     const xpProgress = calculateLevelProgress(totalXp);
     const recentSkills = [...skills]
       .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
       .slice(0, 4);
+    const activityDates = new Set(
+      skills
+        .map((skill) => getDateKey(skill.updatedAt || skill.createdAt))
+        .filter(Boolean)
+    );
+    const weekStart = getStartOfWeek(new Date());
+    const weekActivity = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(weekStart);
+      date.setDate(weekStart.getDate() + index);
+      return activityDates.has(getDateKey(date));
+    });
+    let learningStreak = 0;
+    const streakDate = new Date();
+
+    while (activityDates.has(getDateKey(streakDate))) {
+      learningStreak += 1;
+      streakDate.setDate(streakDate.getDate() - 1);
+    }
 
     return {
       totalSkills,
       completedSkills,
       inProgressSkills,
       totalXp,
+      averageProgress,
       currentLevel,
       xpProgress,
       recentSkills,
+      learningStreak,
+      weekActivity,
       skillsLearned: completedSkills,
     };
   }, [skills]);
@@ -96,7 +145,7 @@ export function SkillProvider({ children }) {
       deleteSkill,
       getSkillStatus,
     }),
-    [skills, stats, categories]
+    [skills, stats, categories, addSkill, updateSkill, deleteSkill]
   );
 
   return <SkillContext.Provider value={value}>{children}</SkillContext.Provider>;

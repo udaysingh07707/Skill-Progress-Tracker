@@ -24,7 +24,7 @@ export default function Profile() {
       title: "Focused Learner",
       detail: "Maintained a learning streak",
       icon: Flame,
-      unlocked: true,
+      unlocked: stats.learningStreak > 0,
     },
     {
       title: "Completionist",

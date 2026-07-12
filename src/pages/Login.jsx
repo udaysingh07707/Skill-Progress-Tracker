@@ -1,12 +1,14 @@
 import { ArrowLeft, LockKeyhole, LogIn, Mail, UserRound } from "lucide-react";
 import { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import Input from "../components/Input.jsx";
 import useAuth from "../hooks/useAuth.js";
+import useSkills from "../hooks/useSkills.js";
 
 export default function Login() {
-  const { isAuthenticated, login } = useAuth();
+  const { login } = useAuth();
+  const { stats } = useSkills();
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({
@@ -15,10 +17,6 @@ export default function Login() {
     password: "",
   });
   const [error, setError] = useState("");
-
-  if (isAuthenticated) {
-    return <Navigate replace to="/dashboard" />;
-  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -46,15 +44,15 @@ export default function Login() {
           <div className="login-track login-track-two" />
           <div className="login-card login-card-one">
             <p className="text-sm font-bold text-emerald-100">Progress</p>
-            <p className="mt-2 text-5xl font-black">82%</p>
+            <p className="mt-2 text-5xl font-black">{stats.averageProgress}%</p>
           </div>
           <div className="login-card login-card-two">
             <p className="text-sm font-bold text-cyan-100">Auto XP</p>
-            <p className="mt-2 text-5xl font-black">820</p>
+            <p className="mt-2 text-5xl font-black">{stats.totalXp.toLocaleString()}</p>
           </div>
           <div className="login-card login-card-three">
             <p className="text-sm font-bold text-amber-100">Level</p>
-            <p className="mt-2 text-5xl font-black">4</p>
+            <p className="mt-2 text-5xl font-black">{stats.currentLevel}</p>
           </div>
         </div>
       </section>

@@ -162,14 +162,16 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-slate-950">Learning Streak</h2>
-                  <p className="text-sm text-slate-500">5 day streak</p>
+                  <p className="text-sm text-slate-500">
+                    {stats.learningStreak} day{stats.learningStreak === 1 ? "" : "s"} streak
+                  </p>
                 </div>
               </div>
               <div className="mt-5 grid grid-cols-7 gap-2">
                 {streakDays.map((day, index) => (
                   <div
                     className={`grid aspect-square place-items-center rounded-2xl text-xs font-black ring-1 ${
-                      index < 5
+                      stats.weekActivity[index]
                         ? "bg-amber-400 text-slate-950 ring-amber-300"
                         : "bg-slate-50 text-slate-400 ring-slate-100"
                     }`}
