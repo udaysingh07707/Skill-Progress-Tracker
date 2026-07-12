@@ -143,7 +143,7 @@ export default function MySkills() {
       )}
 
       <Modal
-        description="Update progress, XP, level, or notes."
+        description="Update completed work or notes. XP and level recalculate automatically."
         onClose={() => setEditingSkill(null)}
         open={Boolean(editingSkill)}
         title="Edit Skill"

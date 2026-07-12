@@ -4,10 +4,18 @@ export const clampProgress = (value) => {
   return Math.min(100, Math.max(0, Math.round(numeric)));
 };
 
-export const normalizeXp = (value) => {
-  const numeric = Number(value);
-  if (Number.isNaN(numeric)) return 0;
-  return Math.max(0, Math.round(numeric));
+export const calculateSkillXp = (progress) => {
+  return clampProgress(progress) * 10;
+};
+
+export const calculateSkillLevel = (progress) => {
+  const normalized = clampProgress(progress);
+
+  if (normalized >= 100) return "Level 5";
+  if (normalized >= 75) return "Level 4";
+  if (normalized >= 50) return "Level 3";
+  if (normalized >= 25) return "Level 2";
+  return "Level 1";
 };
 
 export const getSkillStatus = (progress) => {

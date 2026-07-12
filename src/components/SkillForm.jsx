@@ -1,5 +1,10 @@
-import { Save, X } from "lucide-react";
+import { Award, Save, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+  calculateSkillLevel,
+  calculateSkillXp,
+  clampProgress,
+} from "../utils/skillUtils.js";
 import Button from "./Button.jsx";
 import Input from "./Input.jsx";
 
@@ -7,17 +12,25 @@ const emptySkill = {
   name: "",
   category: "",
   progress: 0,
-  xp: 0,
-  level: "Level 1",
   notes: "",
 };
 
+const getFormState = (skill) => ({
+  name: skill?.name ?? "",
+  category: skill?.category ?? "",
+  progress: skill?.progress ?? 0,
+  notes: skill?.notes ?? "",
+});
+
 export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabel = "Save Skill" }) {
-  const [form, setForm] = useState(initialSkill ?? emptySkill);
+  const [form, setForm] = useState(getFormState(initialSkill));
   const [error, setError] = useState("");
+  const completedWork = clampProgress(form.progress);
+  const earnedXp = calculateSkillXp(completedWork);
+  const earnedLevel = calculateSkillLevel(completedWork);
 
   useEffect(() => {
-    setForm(initialSkill ?? emptySkill);
+    setForm(initialSkill ? getFormState(initialSkill) : emptySkill);
   }, [initialSkill]);
 
   const handleChange = (event) => {
@@ -34,7 +47,12 @@ export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabe
     }
 
     setError("");
-    onSubmit(form);
+    onSubmit({
+      name: form.name,
+      category: form.category,
+      progress: completedWork,
+      notes: form.notes,
+    });
   };
 
   return (
@@ -57,9 +75,9 @@ export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabe
         />
       </div>
 
-      <div className="grid gap-5 md:grid-cols-3">
+      <div className="grid gap-5 lg:grid-cols-[1.2fr_0.9fr_0.9fr]">
         <Input
-          label="Progress"
+          label="Work Completed (%)"
           max="100"
           min="0"
           name="progress"
@@ -68,23 +86,33 @@ export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabe
           type="number"
           value={form.progress}
         />
-        <Input
-          label="XP"
-          min="0"
-          name="xp"
-          onChange={handleChange}
-          placeholder="900"
-          type="number"
-          value={form.xp}
-        />
-        <Input
-          label="Level"
-          name="level"
-          onChange={handleChange}
-          placeholder="Level 3"
-          value={form.level}
-        />
+        <div className="rounded-2xl bg-emerald-50 p-4 ring-1 ring-emerald-100">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-emerald-700 shadow-sm">
+              <Sparkles className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase text-emerald-700">Auto XP</p>
+              <p className="text-2xl font-black text-slate-950">{earnedXp.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-2xl bg-cyan-50 p-4 ring-1 ring-cyan-100">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-cyan-700 shadow-sm">
+              <Award className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase text-cyan-700">Auto Level</p>
+              <p className="text-2xl font-black text-slate-950">{earnedLevel}</p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600 ring-1 ring-slate-100">
+        XP and level are calculated from completed work, so users cannot edit them manually.
+      </p>
 
       <Input
         as="textarea"
