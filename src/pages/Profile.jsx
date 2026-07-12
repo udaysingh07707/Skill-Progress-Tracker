@@ -1,9 +1,11 @@
 import { Award, BadgeCheck, Flame, Sparkles, Target, Trophy, UserRound } from "lucide-react";
 import ProgressBar from "../components/ProgressBar.jsx";
 import StatCard from "../components/StatCard.jsx";
+import useAuth from "../hooks/useAuth.js";
 import useSkills from "../hooks/useSkills.js";
 
 export default function Profile() {
+  const { user } = useAuth();
   const { stats } = useSkills();
   const achievements = [
     {
@@ -44,7 +46,10 @@ export default function Profile() {
               </div>
               <div className="pb-1">
                 <p className="text-sm font-bold uppercase tracking-wide text-emerald-700">Profile</p>
-                <h1 className="text-3xl font-black tracking-normal text-slate-950">Skill Builder</h1>
+                <h1 className="text-3xl font-black tracking-normal text-slate-950">
+                  {user?.name || "Skill Builder"}
+                </h1>
+                {user?.email ? <p className="mt-1 text-sm font-semibold text-slate-500">{user.email}</p> : null}
               </div>
             </div>
             <div className="rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-100">

@@ -4,7 +4,7 @@ import useSkills from "../hooks/useSkills.js";
 import ProgressBar from "./ProgressBar.jsx";
 
 const links = [
-  { label: "Dashboard", path: "/", icon: BarChart3 },
+  { label: "Dashboard", path: "/dashboard", icon: BarChart3 },
   { label: "My Skills", path: "/skills", icon: GraduationCap },
   { label: "Add Skill", path: "/add-skill", icon: PlusCircle },
   { label: "Profile", path: "/profile", icon: UserRound },
@@ -24,7 +24,7 @@ export default function Sidebar() {
         <p className="px-3 text-xs font-bold uppercase tracking-wide text-slate-400">Workspace</p>
         <nav className="mt-3 grid gap-1" aria-label="Dashboard navigation">
           {links.map((link) => (
-            <NavLink className={linkClass} end={link.path === "/"} key={link.path} to={link.path}>
+            <NavLink className={linkClass} end={link.path === "/dashboard"} key={link.path} to={link.path}>
               <link.icon className="h-4 w-4" aria-hidden="true" />
               {link.label}
             </NavLink>

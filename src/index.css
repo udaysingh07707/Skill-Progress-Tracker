@@ -36,3 +36,216 @@
     @apply transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-soft;
   }
 }
+
+@layer utilities {
+  .landing-scene {
+    background:
+      linear-gradient(120deg, rgba(15, 23, 42, 0.98), rgba(15, 118, 110, 0.7)),
+      linear-gradient(45deg, #020617, #0f766e 55%, #0891b2);
+  }
+
+  .landing-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 82%);
+    animation: gridDrift 16s linear infinite;
+  }
+
+  .landing-stage {
+    position: absolute;
+    inset: 96px max(32px, calc((100vw - 1280px) / 2 + 32px)) 48px auto;
+    z-index: 1;
+    width: min(620px, 48vw);
+    pointer-events: none;
+  }
+
+  .scene-panel {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 28px 80px rgba(2, 6, 23, 0.34);
+    backdrop-filter: blur(18px);
+  }
+
+  .scene-panel-main {
+    inset: 74px 36px auto auto;
+    width: min(420px, 100%);
+    min-height: 430px;
+    border-radius: 28px;
+    padding: 28px;
+    animation: panelFloat 5.8s ease-in-out infinite;
+  }
+
+  .scene-panel-top {
+    left: 8px;
+    top: 28px;
+    width: 190px;
+    border-radius: 24px;
+    padding: 22px;
+    animation: panelFloat 6.4s ease-in-out infinite reverse;
+  }
+
+  .scene-panel-bottom {
+    bottom: 34px;
+    right: 4px;
+    width: 210px;
+    border-radius: 24px;
+    padding: 22px;
+    animation: panelFloat 6.2s ease-in-out infinite;
+  }
+
+  .scene-skill {
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    animation: cardRise 5s ease-in-out infinite;
+  }
+
+  .scene-delay-1 {
+    animation-delay: 0.5s;
+  }
+
+  .scene-delay-2 {
+    animation-delay: 1s;
+  }
+
+  .progress-loop {
+    height: 100%;
+    border-radius: 999px;
+    width: var(--target-width);
+    animation: progressPulse 3.2s ease-in-out infinite alternate;
+  }
+
+  .progress-emerald {
+    background: linear-gradient(90deg, #34d399, #2dd4bf);
+  }
+
+  .progress-cyan {
+    background: linear-gradient(90deg, #22d3ee, #38bdf8);
+  }
+
+  .progress-amber {
+    background: linear-gradient(90deg, #fbbf24, #fb923c);
+  }
+
+  .login-visual {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background:
+      linear-gradient(120deg, rgba(2, 6, 23, 0.94), rgba(20, 184, 166, 0.34)),
+      repeating-linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0,
+        rgba(255, 255, 255, 0.08) 1px,
+        transparent 1px,
+        transparent 34px
+      );
+  }
+
+  .login-track {
+    position: absolute;
+    height: 160%;
+    width: 120px;
+    transform: rotate(28deg);
+    background: linear-gradient(180deg, transparent, rgba(45, 212, 191, 0.3), transparent);
+    animation: trackSlide 7s linear infinite;
+  }
+
+  .login-track-one {
+    left: 22%;
+    top: -30%;
+  }
+
+  .login-track-two {
+    left: 58%;
+    top: -42%;
+    animation-delay: 2.2s;
+  }
+
+  .login-card {
+    position: absolute;
+    width: 230px;
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.11);
+    padding: 24px;
+    box-shadow: 0 28px 80px rgba(2, 6, 23, 0.34);
+    backdrop-filter: blur(18px);
+    animation: panelFloat 6s ease-in-out infinite;
+  }
+
+  .login-card-one {
+    left: 14%;
+    top: 18%;
+  }
+
+  .login-card-two {
+    right: 14%;
+    top: 38%;
+    animation-delay: 0.8s;
+  }
+
+  .login-card-three {
+    left: 25%;
+    bottom: 18%;
+    animation-delay: 1.4s;
+  }
+}
+
+@keyframes gridDrift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: 72px 72px, 72px 72px;
+  }
+}
+
+@keyframes panelFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@keyframes cardRise {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes progressPulse {
+  from {
+    width: 12%;
+  }
+
+  to {
+    width: var(--target-width);
+  }
+}
+
+@keyframes trackSlide {
+  from {
+    transform: translateY(-20%) rotate(28deg);
+  }
+
+  to {
+    transform: translateY(20%) rotate(28deg);
+  }
+}
