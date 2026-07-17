@@ -16,22 +16,41 @@ export default function Login() {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: "" }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
-      setError("Please fill all login fields.");
+    const nextErrors = {};
+
+    if (!form.name.trim()) {
+      nextErrors.name = "Name is required.";
+    } else if (!/^[A-Za-z ]+$/.test(form.name.trim())) {
+      nextErrors.name = "Name can contain letters and spaces only.";
+    }
+
+    if (!form.email.trim()) {
+      nextErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@gmail\.com$/i.test(form.email.trim())) {
+      nextErrors.email = "Enter a Gmail address, for example you@gmail.com.";
+    }
+
+    if (!form.password.trim()) {
+      nextErrors.password = "Password is required.";
+    }
+
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
       return;
     }
 
-    setError("");
+    setErrors({});
     login(form);
     navigate(location.state?.from?.pathname || "/dashboard", { replace: true });
   };
@@ -81,22 +100,25 @@ export default function Login() {
           >
             <div className="grid gap-5">
               <Input
-                error={error}
+                error={errors.name}
                 label="Name"
                 name="name"
                 onChange={handleChange}
                 placeholder="Your name"
+                pattern="[A-Za-z ]+"
                 value={form.name}
               />
               <Input
+                error={errors.email}
                 label="Email"
                 name="email"
                 onChange={handleChange}
-                placeholder="you@example.com"
+                placeholder="you@gmail.com"
                 type="email"
                 value={form.email}
               />
               <Input
+                error={errors.password}
                 label="Password"
                 name="password"
                 onChange={handleChange}

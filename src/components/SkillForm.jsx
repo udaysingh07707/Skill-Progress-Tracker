@@ -24,7 +24,7 @@ const getFormState = (skill) => ({
 
 export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabel = "Save Skill" }) {
   const [form, setForm] = useState(getFormState(initialSkill));
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
   const completedWork = clampProgress(form.progress);
   const earnedXp = calculateSkillXp(completedWork);
   const earnedLevel = calculateSkillLevel(completedWork);
@@ -36,17 +36,31 @@ export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabe
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: "" }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    const nextErrors = {};
+
     if (!form.name.trim()) {
-      setError("Skill name is required.");
+      nextErrors.name = "Skill name is required.";
+    } else if (!/^[A-Za-z][A-Za-z0-9\s!@#$%^&*()_+\-=[\]{};:'\",.<>/?\\|`~]*$/.test(form.name.trim())) {
+      nextErrors.name = "Skill name must start with a letter.";
+    }
+
+    const progress = Number(form.progress);
+    if (form.progress === "" || !Number.isFinite(progress) || progress < 0 || progress > 100) {
+      nextErrors.progress = "Work completed must be between 0 and 100%.";
+    }
+
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
       return;
     }
 
-    setError("");
+    setErrors({});
     onSubmit({
       name: form.name,
       category: form.category,
@@ -59,11 +73,12 @@ export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabe
     <form className="grid gap-5" onSubmit={handleSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
         <Input
-          error={error}
+          error={errors.name}
           label="Skill Name"
           name="name"
           onChange={handleChange}
           placeholder="React.js"
+          pattern="[A-Za-z].*"
           value={form.name}
         />
         <Input
@@ -77,6 +92,7 @@ export default function SkillForm({ initialSkill, onCancel, onSubmit, submitLabe
 
       <div className="grid gap-5 lg:grid-cols-[1.2fr_0.9fr_0.9fr]">
         <Input
+          error={errors.progress}
           label="Work Completed (%)"
           max="100"
           min="0"
